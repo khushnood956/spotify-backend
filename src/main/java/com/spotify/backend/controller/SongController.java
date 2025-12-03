@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.core.io.Resource;
@@ -60,7 +61,7 @@ public class SongController {
             Song song = optionalSong.get();
 
             // 2. Get file path (assuming song has 'filePath' field)
-            String filePath = song.getFilePath(); // e.g., "songs/song1.mp3"
+            String filePath = song.getFileUrl(); // e.g., "songs/song1.mp3"
             Path path = Paths.get(filePath);
             Resource resource = new UrlResource(path.toUri());
 
