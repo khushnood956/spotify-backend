@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "songs")
@@ -26,13 +27,36 @@ public class Song {
     private String fileUrl;
     private String genre;
     private long playCount;
+    private String createdAt;  // ADD THIS FIELD
+    private String updatedAt;  // ADD THIS FIELD
+
+    // Constructors
+    public Song() {
+        this.playCount = 0;
+        this.createdAt = new Date().toInstant().toString();
+        this.updatedAt = this.createdAt;
+    }
 
     @Transient
     private Artist artist;
     @Transient
     private Album album;
 
-    public Song() {}
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     public String getId() {
         return id;

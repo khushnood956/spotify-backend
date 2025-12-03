@@ -20,4 +20,7 @@ public interface SongRepository extends MongoRepository<Song, String> {
     // Optional: Add method for top songs
     @Query("{ }")  // Empty filter to get all
     List<Song> findByOrderByPlayCountDesc();
+
+    @Query("{'createdAt': {$gt: ?0}}")
+    Long countByCreatedAtAfter(String date);
 }

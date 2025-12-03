@@ -89,11 +89,11 @@ public class SongService {
     }
 
     public boolean incrementPlayCount(String songId) {
-        Optional<Song> optionalSong = songRepository.findById(songId);
+        Optional<Song> optionalSong = songRepo.findById(songId);
         if (optionalSong.isPresent()) {
             Song song = optionalSong.get();
-            song.setPlays(song.getPlays() + 1);
-            songRepository.save(song);
+            song.setPlayCount(song.getPlayCount() + 1);
+            songRepo.save(song);
             return true;
         }
         return false;
