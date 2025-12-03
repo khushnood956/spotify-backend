@@ -9,6 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @RestController
 @RequestMapping("/api/songs")
 @CrossOrigin(origins = "*")
@@ -37,6 +45,34 @@ public class SongController {
     public List<Song> getSongsByGenre(@PathVariable String genre) {
         // You'll need to add this method to SongService
         return songService.getByGenre(genre);
+    }
+
+    // Add to SongController.java
+    @GetMapping("/{id}/stream")
+    public ResponseEntity<Resource> streamSong(@PathVariable String id) {
+        try {
+            // 1. Get song from database
+            Optional<Song> optionalSong = songService.getById(id);
+            if (!optionalSong.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Song song = optionalSong.get();
+
+            // 2. Get file path (assuming song has 'filePath' field)
+            String filePath = song.getFilePath(); // e.g., "songs/song1.mp3"
+            Path path = Paths.get(filePath);
+            Resource resource = new UrlResource(path.toUri());
+
+            // 3. Stream the file
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType("audio/mpeg"))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     // 4️⃣ Get songs by artist ID
@@ -76,4 +112,14 @@ public class SongController {
                 ? ResponseEntity.ok("Song deleted")
                 : ResponseEntity.status(404).body("Song not found");
     }
+
+    // 9️⃣ Increment play count for a song
+    @PostMapping("/{id}/play")
+    public ResponseEntity<?> incrementPlayCount(@PathVariable String id) {
+        boolean updated = songService.incrementPlayCount(id);
+        return updated
+                ? ResponseEntity.ok(Map.of("success", true, "message", "Play count updated"))
+                : ResponseEntity.status(404).body(Map.of("success", false, "message", "Song not found"));
+    }
+
 }

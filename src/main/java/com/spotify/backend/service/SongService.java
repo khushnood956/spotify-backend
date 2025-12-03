@@ -88,6 +88,17 @@ public class SongService {
                 .toList();
     }
 
+    public boolean incrementPlayCount(String songId) {
+        Optional<Song> optionalSong = songRepository.findById(songId);
+        if (optionalSong.isPresent()) {
+            Song song = optionalSong.get();
+            song.setPlays(song.getPlays() + 1);
+            songRepository.save(song);
+            return true;
+        }
+        return false;
+    }
+
     public boolean delete(String id) {
         if (!songRepo.existsById(id)) return false;
         songRepo.deleteById(id);
