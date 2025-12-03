@@ -1,7 +1,10 @@
 package com.spotify.backend.repository;
 
 import com.spotify.backend.model.Artist;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface ArtistRepository extends MongoRepository<Artist, String> {
+    Page<Artist> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }

@@ -3,11 +3,13 @@ package com.spotify.backend.service;
 import com.spotify.backend.model.*;
 import com.spotify.backend.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -126,6 +128,35 @@ public class PlaylistService {
             return playlistRepo.save(playlist);
         }).orElseThrow(() -> new RuntimeException("Playlist not found: " + playlistId));
     }
+
+
+    public Map<String, Object> getPaginated(int page, int size, String search) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Playlist> playlistPage;
+
+        if (search != null && !search.isEmpty()) {
+            playlistPage = playlistRepo.findByNameContainingIgnoreCase(search, pageable);
+        } else {
+            playlistPage = playlistRepo.findAll(pageable);
+        }
+
+        List<Playlist> enriched = playlistPage.getContent()
+                .stream()
+                .map(this::enrichPlaylist) // you already have this method
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("page", page);
+        response.put("size", size);
+        response.put("totalPages", playlistPage.getTotalPages());
+        response.put("totalElements", playlistPage.getTotalElements());
+        response.put("data", enriched);
+
+        return response;
+    }
+
 
     // Add multiple songs to playlist - SIMPLIFIED for MongoDB
     public Playlist addSongsToPlaylist(String playlistId, List<String> songIds) {

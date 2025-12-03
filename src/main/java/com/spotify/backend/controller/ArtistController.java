@@ -3,6 +3,7 @@ package com.spotify.backend.controller;
 import com.spotify.backend.model.Artist;
 import com.spotify.backend.repository.ArtistRepository;
 
+import com.spotify.backend.service.ArtistService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,23 @@ public class ArtistController {
 
     @Autowired
     private ArtistRepository artistRepository;
+    @Autowired
+    private ArtistService artistService;
 
     // ▶ Get all artists
     @GetMapping
-    public List<Artist> getAllArtists() {
-        return artistRepository.findAll();
+    public ResponseEntity<?> getAllArtists(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search
+    ) {
+        if (page < 0) page = 0;
+        if (size <= 0) size = 10;
+        if (size > 100) size = 100;
+
+        return ResponseEntity.ok(artistService.getPaginated(page, size, search));
     }
+
 
     // ▶ Get artist by ID
     @GetMapping("/{id}")

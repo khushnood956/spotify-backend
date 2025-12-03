@@ -3,6 +3,7 @@ package com.spotify.backend.controller;
 import com.spotify.backend.model.Album;
 import com.spotify.backend.repository.AlbumRepository;
 
+import com.spotify.backend.service.AlbumService;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +19,22 @@ public class AlbumController {
 
     @Autowired
     private AlbumRepository albumRepository;
+    @Autowired
+    private AlbumService albumService;
 
-    // ▶ Get all albums
     @GetMapping
-    public List<Album> getAllAlbums() {
-        return albumRepository.findAll();
+    public ResponseEntity<?> getAllAlbums(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search
+    ) {
+        if (page < 0) page = 0;
+        if (size <= 0) size = 10;
+        if (size > 100) size = 100;
+
+        return ResponseEntity.ok(albumService.getPaginated(page, size, search));
     }
+
 
     // ▶ Get album by ID
     @GetMapping("/{id}")

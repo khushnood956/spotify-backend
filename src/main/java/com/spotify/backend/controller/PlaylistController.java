@@ -110,28 +110,18 @@ public class PlaylistController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Playlist>> getAllPlaylists() {
-        try {
-            System.out.println("🔍 Fetching ALL playlists from database...");
+    public ResponseEntity<?> getAllPlaylists(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search
+    ) {
+        if (page < 0) page = 0;
+        if (size <= 0) size = 10;
+        if (size > 100) size = 100;
 
-            // Get ALL playlists (no user filtering)
-            List<Playlist> allPlaylists = playlistRepository.findAll();
-            System.out.println("✅ Found " + allPlaylists.size() + " playlists in database");
-
-            // Enrich each playlist with song details
-            List<Playlist> enrichedPlaylists = allPlaylists.stream()
-                    .map(playlistService::enrichPlaylist)
-                    .collect(Collectors.toList());
-
-            System.out.println("✅ Returning " + enrichedPlaylists.size() + " enriched playlists");
-            return ResponseEntity.ok(enrichedPlaylists);
-
-        } catch (Exception e) {
-            System.out.println("❌ Error fetching all playlists: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(playlistService.getPaginated(page, size, search));
     }
+
 
     // Get playlist by ID
     @GetMapping("/{id}")

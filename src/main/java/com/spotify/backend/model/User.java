@@ -15,14 +15,18 @@ public class User {
     private String displayName;
     private String profilePicture;
     private String joinDate;
-    private String role; // Make sure this exists
+    private String lastActive;  // ADD THIS FIELD
+    private String role;
+    private boolean isActive = true;  // ADD THIS FIELD
 
-    // Default constructor
+    // Constructors
     public User() {
-        this.role = "USER"; // Default role, but can be overwritten
+        this.role = "USER";
+        this.isActive = true;
+        this.joinDate = new Date().toInstant().toString();
     }
 
-    // Getters and setters - CHECK THESE CAREFULLY!
+    // Getters and setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -44,9 +48,12 @@ public class User {
     public String getJoinDate() { return joinDate; }
     public void setJoinDate(String joinDate) { this.joinDate = joinDate; }
 
-    // ⚠️ CHECK THIS SETTER CAREFULLY - IT SHOULD NOT FORCE "USER"
+    public String getLastActive() { return lastActive; }  // ADD GETTER
+    public void setLastActive(String lastActive) { this.lastActive = lastActive; }  // ADD SETTER
+
     public String getRole() { return role; }
-    public void setRole(String role) {
-        this.role = role; // Should accept whatever value is passed
-    }
+    public void setRole(String role) { this.role = role; }
+
+    public boolean isActive() { return isActive; }  // ADD GETTER
+    public void setActive(boolean active) { isActive = active; }  // ADD SETTER
 }

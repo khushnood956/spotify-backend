@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.core.io.Resource;
@@ -25,11 +26,19 @@ public class SongController {
     @Autowired
     private SongService songService;  // Use Service instead of Repository
 
-    // 1️⃣ Get all songs (with enriched artist/album data)
     @GetMapping
-    public List<Song> getAllSongs() {
-        return songService.getAll();  // This will call the enrich method
+    public ResponseEntity<?> getAllSongs(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search
+    ) {
+        if (page < 0) page = 0;
+        if (size <= 0) size = 10;
+        if (size > 100) size = 100;
+
+        return ResponseEntity.ok(songService.getPaginated(page, size, search));
     }
+
 
     // 2️⃣ Get song by ID (with enriched data)
     @GetMapping("/{id}")
@@ -60,7 +69,7 @@ public class SongController {
             Song song = optionalSong.get();
 
             // 2. Get file path (assuming song has 'filePath' field)
-            String filePath = song.getFilePath(); // e.g., "songs/song1.mp3"
+            String filePath = song.getFileUrl(); // e.g., "songs/song1.mp3"
             Path path = Paths.get(filePath);
             Resource resource = new UrlResource(path.toUri());
 

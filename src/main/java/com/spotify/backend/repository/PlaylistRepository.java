@@ -5,6 +5,8 @@ import com.spotify.backend.model.Artist;
 import com.spotify.backend.model.Playlist;
 import com.spotify.backend.model.Song;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +21,7 @@ public interface PlaylistRepository extends MongoRepository<Playlist, String> {
     long countByCreatedBy(String createdBy);
     List<Playlist> findByCreatedByAndNameContaining(String createdBy, String name);
 
-
+    Page<Playlist> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
 
 

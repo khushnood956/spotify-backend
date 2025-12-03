@@ -20,9 +20,18 @@ public class UserController {
 
     // GET all users
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAll());
+    public ResponseEntity<?> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search
+    ) {
+        if (page < 0) page = 0;
+        if (size <= 0) size = 10;
+        if (size > 100) size = 100;
+
+        return ResponseEntity.ok(userService.getPaginated(page, size, search));
     }
+
 
     // GET user by ID
     @GetMapping("/{id}")
