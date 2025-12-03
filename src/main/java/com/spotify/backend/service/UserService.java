@@ -63,7 +63,7 @@ public class UserService {
         Page<User> userPage;
 
         if (search != null && !search.isEmpty()) {
-            userPage = userRepo.findByNameContainingIgnoreCase(search, pageable);
+            userPage = userRepo.findByUsernameContainingIgnoreCase(search, pageable);
         } else {
             userPage = userRepo.findAll(pageable);
         }
