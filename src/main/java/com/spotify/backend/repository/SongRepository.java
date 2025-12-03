@@ -1,6 +1,8 @@
 package com.spotify.backend.repository;
 
 import com.spotify.backend.model.Song;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import java.util.List;
@@ -20,6 +22,7 @@ public interface SongRepository extends MongoRepository<Song, String> {
     // Optional: Add method for top songs
     @Query("{ }")  // Empty filter to get all
     List<Song> findByOrderByPlayCountDesc();
+    Page<Song> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
     @Query("{'createdAt': {$gt: ?0}}")
     Long countByCreatedAtAfter(String date);

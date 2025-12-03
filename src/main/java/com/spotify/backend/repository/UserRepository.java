@@ -20,7 +20,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @Query("{'$or': [{'username': {$regex: ?0, $options: 'i'}}, {'email': {$regex: ?1, $options: 'i'}}]}")
     Page<User> findByUsernameContainingOrEmailContaining(String username, String email, Pageable pageable);
-
+    Page<User> findByNameContainingIgnoreCase(String name, Pageable pageable);
     Long countByJoinDateAfter(String date);
 
 }
