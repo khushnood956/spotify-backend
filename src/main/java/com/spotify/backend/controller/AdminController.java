@@ -99,66 +99,6 @@ public class AdminController {
         return ResponseEntity.ok(stats);
     }
 
-    /**
-     * DEMO: Show database performance metrics
-     */
-    @GetMapping("/performance")
-    public ResponseEntity<?> getDatabasePerformance() {
-
-        Map<String, Object> metrics = new HashMap<>();
-
-        // Simulate database metrics
-        metrics.put("totalQueries", 1245);
-        metrics.put("avgResponseTime", "45ms");
-        metrics.put("slowQueries", 12);
-        metrics.put("indexHitRatio", "78%");
-        metrics.put("cacheHitRate", "92%");
-
-        // Show transactions
-        metrics.put("activeTransactions", 3);
-        metrics.put("transactionsPerSecond", 45);
-
-        // Index usage
-        metrics.put("indexes", List.of(
-                Map.of("name", "songs_genre_idx", "usage", "85%", "size", "2.1MB"),
-                Map.of("name", "users_email_idx", "usage", "92%", "size", "1.4MB"),
-                Map.of("name", "playlists_createdBy_idx", "usage", "67%", "size", "0.8MB")
-        ));
-
-        return ResponseEntity.ok(Map.of(
-                "message", "Database performance metrics",
-                "timestamp", Instant.now().toString(),
-                "metrics", metrics,
-                "recommendations", List.of(
-                        "Create text index on song titles",
-                        "Add compound index for user search",
-                        "Consider sharding for songs collection"
-                )
-        ));
-    }
-
-    /**
-     * DEMO: Simulate concurrent transaction scenario
-     */
-    @GetMapping("/concurrency-demo")
-    public ResponseEntity<?> concurrencyDemo() {
-
-        return ResponseEntity.ok(Map.of(
-                "scenario", "Two users trying to add same song to playlist simultaneously",
-                "problem", "Without transactions: Playlist count mismatch",
-                "solution", "MongoDB 4.0+ multi-document transactions",
-                "transactionFlow", List.of(
-                        "1. Start transaction",
-                        "2. Check song availability",
-                        "3. Add to playlist_songs",
-                        "4. Update playlist song count",
-                        "5. Commit transaction"
-                ),
-                "isolationLevel", "Snapshot Isolation",
-                "rollbackSupport", "Yes - automatic on error"
-        ));
-    }
-
     @GetMapping("/stats/genres")
     public ResponseEntity<Map<String, Object>> getGenreStats() {
         Map<String, Object> response = new HashMap<>();

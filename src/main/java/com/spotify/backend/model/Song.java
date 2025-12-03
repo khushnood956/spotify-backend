@@ -2,19 +2,12 @@ package com.spotify.backend.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.TextScore;
-import org.springframework.objenesis.instantiator.annotations.Instantiator;
 
 import java.util.Date;
 import java.util.List;
 
 @Document(collection = "songs")
-@CompoundIndex(def = "{'genre': 1, 'playCount': -1}", name = "genre_plays_idx")
-@CompoundIndex(def = "{'artist_id': 1, 'album_id': 1}", name = "artist_album_idx")
 public class Song {
 
     @Id
@@ -26,31 +19,16 @@ public class Song {
 
 
 
-    @TextIndexed(weight = 10)
+
     private String title;
-    @Indexed
     private String artist_id;
-    @Indexed
     private String album_id;
     private int duration;
     private String fileUrl;
-    @Indexed
     private String genre;
     private long playCount;
     private String createdAt;  // ADD THIS FIELD
     private String updatedAt;  // ADD THIS FIELD
-
-    public Float getTextScore() {
-        return textScore;
-    }
-
-    public void setTextScore(Float textScore) {
-        this.textScore = textScore;
-    }
-
-    @TextScore
-    private Float textScore; // For text search relevance score
-
 
     // Constructors
     public Song() {

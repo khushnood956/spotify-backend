@@ -23,7 +23,4 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     Long countByJoinDateAfter(String date);
 
-    Page<User> findByNameContainingIgnoreCase(String name, Pageable pageable);
-
-
 }
