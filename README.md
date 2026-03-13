@@ -1,123 +1,252 @@
-# Spotify Mock Backend API
+# Spotify Mock Backend (Spring Boot)
 
-A RESTful backend API for a Spotify-like music streaming application built with Node.js and Express. The system supports user authentication, song browsing, playlist management, and basic admin analytics using a MongoDB database.
+A RESTful backend API for a Spotify-style music streaming platform built with **Java, Spring Boot, Spring Security, and MongoDB**.
+The system supports authentication, music catalog management, playlists, user interactions, and administrative analytics.
+
+---
+
+## Overview
+
+This backend provides the core functionality required for a music streaming platform, including:
+
+* User registration and authentication with **JWT**
+* Role-based authorization (**USER / ADMIN**)
+* CRUD APIs for songs, albums, artists, and genres
+* Playlist creation and song management
+* User interactions such as likes and follows
+* Admin dashboard endpoints for platform statistics
+
+---
 
 ## Tech Stack
 
-* Node.js
-* Express.js
-* MongoDB (Atlas)
-* express-session (session authentication)
-* bcryptjs (password hashing)
-* dotenv (environment configuration)
-* cors
+* Java 21
+* Spring Boot
+* Spring Web
+* Spring Security
+* Spring Data MongoDB
+* JWT (jjwt)
+* Maven
+* Lombok
 
-## Features
+---
 
-* User registration and login with hashed passwords
-* Session-based authentication and protected routes
-* Browse songs and retrieve song details
-* Play songs and track play counts
-* Create and manage user playlists
-* Admin statistics dashboard for system analytics
+## Architecture
+
+The project follows a **layered architecture**:
+
+Controller → Service → Repository → MongoDB
+
+**Controller Layer**
+Handles HTTP requests and responses.
+
+**Service Layer**
+Contains business logic and data enrichment.
+
+**Repository Layer**
+Manages database access using Spring Data MongoDB.
+
+**Model Layer**
+Defines MongoDB document mappings.
+
+Security flow:
+
+Request → JWT Filter → Security Context → Authorized Controller
+
+---
 
 ## Project Structure
 
 ```
-backend/
-├── server.js            # Application entry point
-├── package.json         # Project dependencies
-├── seedData.js          # Database seeding script
-│
-├── middleware/
-│   └── auth.js          # Authentication / authorization middleware
-│
-├── routes/
-│   ├── auth.js          # Authentication endpoints
-│   ├── songs.js         # Song browsing and play tracking
-│   ├── playlists.js     # Playlist management
-│   └── admin.js         # Admin statistics routes
-│
-└── utils/
-    └── dbConnection.js  # MongoDB connection
+src/main/java/com/spotify/backend
+├── config
+├── controller
+├── service
+├── repository
+├── model
+└── SpotifyBackendApplication
 ```
 
-## API Endpoints
+Main modules include:
+
+* **AuthController** – login and registration
+* **UserController** – user management
+* **SongController** – music catalog APIs
+* **PlaylistController** – playlist operations
+* **AdminController** – platform analytics
+
+---
+
+## Security
+
+Authentication is implemented using **JWT Bearer tokens**.
+
+Authentication flow:
+
+1. User submits credentials to `/api/auth/login`
+2. Backend validates credentials
+3. A JWT token is generated and returned
+4. Client sends token in requests:
+
+```
+Authorization: Bearer <token>
+```
+
+Role-based access:
+
+* `USER`
+* `ADMIN`
+
+Admin endpoints require admin privileges.
+
+---
+
+## Running the Project
+
+### Prerequisites
+
+* JDK 21
+* Maven
+* MongoDB (local or remote)
+
+### Environment Variable
+
+Set the MongoDB connection URI:
+
+```bash
+MONGO_URL=mongodb://localhost:27017/spotify_mock
+```
+
+### Start the Application
+
+```
+./mvnw spring-boot:run
+```
+
+Windows:
+
+```
+mvnw.cmd spring-boot:run
+```
+
+### Build the Project
+
+```
+./mvnw clean package
+```
+
+### Run Tests
+
+```
+./mvnw test
+```
+
+The server runs on:
+
+```
+http://localhost:8082
+```
+
+---
+
+## API Modules
 
 ### Authentication
 
-| Method | Endpoint             | Description               |
-| ------ | -------------------- | ------------------------- |
-| POST   | `/api/auth/register` | Register new user         |
-| POST   | `/api/auth/login`    | Login with username/email |
-| POST   | `/api/auth/logout`   | Logout user               |
-| GET    | `/api/auth/me`       | Get current session user  |
+* `POST /api/auth/login`
+* `POST /api/auth/register`
+* `GET /api/auth/validate`
+* `GET /api/auth/me`
 
 ### Songs
 
-| Method | Endpoint              | Description             |
-| ------ | --------------------- | ----------------------- |
-| GET    | `/api/songs`          | Get all songs           |
-| GET    | `/api/songs/:id`      | Get single song details |
-| POST   | `/api/songs/:id/play` | Increment play count    |
+* `GET /api/songs`
+* `GET /api/songs/{id}`
+* `GET /api/songs/genre/{genre}`
+* `POST /api/songs`
+* `PUT /api/songs/{id}`
+* `DELETE /api/songs/{id}`
+
+### Albums
+
+* `GET /api/albums`
+* `POST /api/albums`
+* `PUT /api/albums/{id}`
+* `DELETE /api/albums/{id}`
+
+### Artists
+
+* `GET /api/artists`
+* `POST /api/artists`
+* `PUT /api/artists/{id}`
+* `DELETE /api/artists/{id}`
 
 ### Playlists
 
-| Method | Endpoint         | Description         |
-| ------ | ---------------- | ------------------- |
-| GET    | `/api/playlists` | Get user playlists  |
-| POST   | `/api/playlists` | Create new playlist |
+* `POST /api/playlists`
+* `GET /api/playlists`
+* `PUT /api/playlists/{id}`
+* `DELETE /api/playlists/{id}`
 
 ### Admin
 
-| Method | Endpoint           | Description                    |
-| ------ | ------------------ | ------------------------------ |
-| GET    | `/api/admin/stats` | System statistics (admin only) |
+* `GET /api/admin/stats`
+* `GET /api/admin/users`
+* `POST /api/admin/users/{id}/ban`
 
-## Environment Variables
-
-Create a `.env` file in the backend directory.
-
-```
-MONGODB_URI=your_mongodb_connection_string
-SESSION_SECRET=your_secret_key
-PORT=3000
-```
-
-## Installation
-
-```bash
-git clone https://github.com/yourusername/spotify-backend.git
-cd spotify-backend/backend
-npm install
-```
-
-Run the server:
-
-```bash
-npm start
-```
-
-Seed the database with sample data:
-
-```bash
-npm run seed
-```
-
-## Authentication
-
-The application uses **session-based authentication**. After login, a session cookie (`connect.sid`) is stored in the client and used to access protected routes.
+---
 
 ## Database Collections
 
+MongoDB collections used by the system:
+
 * users
-* artists
-* albums
 * songs
+* albums
+* artists
 * genres
 * playlists
-* playlist_songs
+* user_likes
+* user_follows
+* admin_logs
 
-## Purpose
+---
 
-This project was built as a backend learning project to demonstrate REST API design, authentication, database integration, and modular backend architecture using Node.js and MongoDB.
+## Example Login Request
+
+```
+POST /api/auth/login
+```
+
+```json
+{
+  "username": "admin@example.com",
+  "password": "your-password"
+}
+```
+
+Response:
+
+```json
+{
+  "token": "jwt_token_here",
+  "role": "ADMIN",
+  "message": "Login successful"
+}
+```
+
+---
+
+## Future Improvements
+
+* Swagger / OpenAPI documentation
+* Refresh token support
+* Request validation DTOs
+* Integration tests
+* Seed data initializer
+
+---
+
+## License
+
+This project was built for educational and portfolio purposes.
